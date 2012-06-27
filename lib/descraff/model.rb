@@ -1,3 +1,7 @@
+Dir["./model/**"].each do |name|
+  require name
+end
+
 module Descraff
   module Model
     
@@ -22,14 +26,14 @@ module Descraff
       end
       
       def desc_entity_filter(name, &block)
-        enitity_filter = EntityListDescription.new
+        enitity_filter = EntityFilterDescription.new
         enitity_filter.name = name
         enitity_filter.options = options
         descmeta.entity_filters << enitity_filter
       end
       
       def desc_action(name, options)
-        action = EntityListDescription.new
+        action = ActionDescription.new
         action.name = name
         action.options = options
         descmeta.actions << action

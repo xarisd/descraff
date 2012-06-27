@@ -3,7 +3,7 @@ module Descraff
     MAJOR = 0
     MINOR = 1
     PATCH = 0
-    BUILD = ''
+    BUILD = 'pre01'
     
     STRING = [MAJOR, MINOR, PATCH, BUILD].compact.join('.')
   end
