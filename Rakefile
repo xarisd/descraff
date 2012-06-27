@@ -17,10 +17,11 @@ Jeweler::Tasks.new do |gem|
   gem.name = "descraff"
   gem.homepage = "http://github.com/xarisd/descraff"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
+  gem.summary = %Q{A Ruby gem for describing your model's scaffolding}
   gem.description = %Q{TODO: longer description of your gem}
   gem.email = "xaris.dimitriou@gmail.com"
   gem.authors = ["xarisd"]
+  gem.version = Descraff::Version::STRING
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new
@@ -32,13 +33,13 @@ Rake::TestTask.new(:test) do |test|
   test.verbose = true
 end
 
-require 'rcov/rcovtask'
-Rcov::RcovTask.new do |test|
-  test.libs << 'test'
-  test.pattern = 'test/**/test_*.rb'
-  test.verbose = true
-  test.rcov_opts << '--exclude "gems/*"'
-end
+# require 'rcov/rcovtask'
+# Rcov::RcovTask.new do |test|
+#   test.libs << 'test'
+#   test.pattern = 'test/**/test_*.rb'
+#   test.verbose = true
+#   test.rcov_opts << '--exclude "gems/*"'
+# end
 
 task :default => :test
 
