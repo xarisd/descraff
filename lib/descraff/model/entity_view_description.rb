@@ -1,7 +1,7 @@
 module Descraff
   module Model
     
-    class EntityFilterDescription
+    class EntityViewDescription
       attr_reader :name, :options, :groups, :current_group, :default_group
       
       def initialize(name, options=nil, &block)
@@ -27,10 +27,12 @@ module Descraff
         
         group.options.merge!(options) if options
         
-        old_current_group = @current_group
-        @current_group = group
-        yield if block_given?
-        @current_group = old_current_group
+        if block_given?
+          old_current_group = @current_group
+          @current_group = group
+          yield 
+          @current_group = old_current_group
+        end
       end
       
       def field(name, options=nil)
