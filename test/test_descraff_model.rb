@@ -1,4 +1,7 @@
+# encoding: utf-8
+
 require 'helper'
+require 'descraff/model'
 
 class TestDescraffModel < Test::Unit::TestCase
   
@@ -82,8 +85,9 @@ class TestDescraffModel < Test::Unit::TestCase
         @code_field_options = code_field_options = {title: "Code", type: :string, required: false}
         @default_filter_options = default_filter_options = {description: "Filter for the db records"}
         @default_filter__group_basic_data_options = default_filter__group_basic_data_options = {title: "Basic Data", open: true}
-        @filter_field_description_options = filter_field_description_options = { title: "Description", autocomplete: true }
-        @filter_field_compound_search_options = filter_field_compound_search_options = { title: "Search Text", compound: true, fields: [:code, :some_field] }
+        @field_description_options = field_description_options = { title: "Description", autocomplete: true }
+        @field_compound_search_options = field_compound_search_options = { title: "Search Text", compound: true, fields: [:code, :some_field] }
+        @actions_generate_options = actions_generate_options = {title: "Generate"}
         
         # Open the test_class and define more descriptions
         # with Class.class_eval I can use local variable via closure scope (no need for "lambda" shared state here)
@@ -94,15 +98,43 @@ class TestDescraffModel < Test::Unit::TestCase
           
             entity_filter :default, default_filter_options do
               group :basic_data, default_filter__group_basic_data_options do
-                field :some_field, filter_field_description_options
+                field :some_field, field_description_options
+              end
+              group :advanced_data do
+                field :code
+                action :generate, actions_generate_options
+              end
+            end
+          
+            entity_filter :quick_filter do
+              field :search, field_compound_search_options
+            end
+            
+            view :show do
+              group :basic_data, default_filter__group_basic_data_options do
+                field :some_field, field_description_options
               end
               group :advanced_data do
                 field :code
               end
             end
-          
-            entity_filter :quick_filter do
-              field :search, filter_field_compound_search_options
+
+            view :quick_show do
+              field :some_field, field_description_options
+              action :edit
+            end
+
+            view :inline_show do
+              group :inline do
+                group :left do
+                  field :some_field, field_description_options
+                end
+                group :right do
+                  field :code
+                end
+                action :reverse_order_of_fields
+              end
+              action :edit
             end
           end
         end
@@ -134,7 +166,7 @@ class TestDescraffModel < Test::Unit::TestCase
         assert_equal({}, quick_filter.options)
       end
       
-      should ":default_filter must contain 2 filter_groups with name of :basic_data and :advanced_data" do
+      should "filter :default_filter must contain 2 groups with name of :basic_data and :advanced_data" do
         default_filter = @test_class.descraff.entity_filters[0]
         assert_equal(3, default_filter.groups.size) #always has a :default group
         
@@ -148,27 +180,80 @@ class TestDescraffModel < Test::Unit::TestCase
         assert_equal(1, group_advanced_data.fields.size)
         
         # check :basic_data group
-        filter_field_some_field = group_basic_data.fields[0]
-        assert_equal(:some_field, filter_field_some_field.name)
-        assert_equal(@filter_field_description_options, filter_field_some_field.options)        
+        field_some_field = group_basic_data.fields[0]
+        assert_equal(:some_field, field_some_field.name)
+        assert_equal(@field_description_options, field_some_field.options)        
 
         # check :advanced_data group
-        filter_field_code = group_advanced_data.fields[0]
-        assert_equal(:code, filter_field_code.name)
-        assert_equal({}, filter_field_code.options)        
-        
+        field_code = group_advanced_data.fields[0]
+        assert_equal(:code, field_code.name)
+        assert_equal({}, field_code.options)        
       end
 
-      should ":quick_filter must contain 1 filter_group with name of :default" do
+      should "group :advanced_data in filter :default_filter must contain 1 action with name of :generate" do
+        default_filter = @test_class.descraff.entity_filters[0]
+        group_advanced_data = default_filter.groups[2]
+        assert_equal(1, group_advanced_data.actions.size)
+        action_generate = group_advanced_data.actions[0]
+        assert_equal(:generate, action_generate.name)
+        assert_equal(@actions_generate_options, action_generate.options)
+      end
+
+      should "filter :quick_filter must contain 1 group with name of :default" do
         quick_filter = @test_class.descraff.entity_filters[1]
         assert_equal(1, quick_filter.groups.size) #always has a :default group
         group_default = quick_filter.groups[0]
         assert_equal(1, group_default.fields.size)
         # check :default group
-        filter_field_search = group_default.fields[0]
-        assert_equal(:search, filter_field_search.name)
-        assert_equal(@filter_field_compound_search_options, filter_field_search.options)        
+        field_search = group_default.fields[0]
+        assert_equal(:search, field_search.name)
+        assert_equal(@field_compound_search_options, field_search.options)        
       end
+
+      should "view :show must contain 2 groups with name of :basic_data and :advanced_data" do
+        view_show = @test_class.descraff.views[0]
+        assert_equal(3, view_show.groups.size) #always has a :default group
+        
+        # check groups
+        group_default = view_show.groups[0]
+        group_basic_data = view_show.groups[1]
+        group_advanced_data = view_show.groups[2]
+        
+        assert_equal(0, group_default.fields.size)
+        assert_equal(1, group_basic_data.fields.size)
+        assert_equal(1, group_advanced_data.fields.size)
+        
+        # check :basic_data group
+        field_some_field = group_basic_data.fields[0]
+        assert_equal(:some_field, field_some_field.name)
+        assert_equal(@field_description_options, field_some_field.options)        
+
+        # check :advanced_data group
+        field_code = group_advanced_data.fields[0]
+        assert_equal(:code, field_code.name)
+        assert_equal({}, field_code.options)        
+      end
+
+      should "view :quick_show must contain 1 group with name of :default" do
+        view_quick_show = @test_class.descraff.views[1]
+        assert_equal(1, view_quick_show.groups.size) #always has a :default group
+        group_default = view_quick_show.groups[0]
+        assert_equal(1, group_default.fields.size)
+        # check :default group
+        field_search = group_default.fields[0]
+        assert_equal(:some_field, field_search.name)
+        assert_equal(@field_description_options, field_search.options)        
+      end
+
+      should "view :quick_show must contain 1 action with name of :edit" do
+        view_quick_show = @test_class.descraff.views[1]
+        assert_equal(1, view_quick_show.actions.size)
+        action_edit = view_quick_show.actions[0]
+        assert_equal(:edit, action_edit.name)
+      end
+
+      should "view :inline_show must contain several groups (in a tree structure), 1 group action and 1 top level action"
+      
     end
   end
 

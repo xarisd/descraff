@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 module Descraff
   module Model
     
@@ -5,17 +7,6 @@ module Descraff
       attr_reader :name, :options
       
       def initialize(name, options=nil)
-        @name = name
-        @options ||= {}
-        @options.merge!(options) if options
-      end
-    end
-    
-    class FieldGroupDescription
-      attr_reader :name, :options, :fields
-      
-      def initialize(name, options=nil)
-        @fields = []
         @name = name
         @options ||= {}
         @options.merge!(options) if options

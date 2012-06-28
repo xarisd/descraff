@@ -1,3 +1,6 @@
+# encoding: utf-8
+
+require_relative "version"
 Dir[File.join(File.dirname(__FILE__), 'model') + "/**"].each do |name|
   # puts name
   require name

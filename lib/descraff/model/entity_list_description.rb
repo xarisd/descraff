@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 module Descraff
   module Model
     class EntityListDescription

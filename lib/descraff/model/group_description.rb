@@ -3,22 +3,27 @@
 module Descraff
   module Model
     
-    class EntityViewDescription
-      attr_reader :name, :options, :groups, :actions
+    class FieldGroupDescription
+      attr_reader :name, :options, :fields, :actions, :groups
       
-      def initialize(name, options=nil, &block)
+      def initialize(name, options=nil)
+        @fields = []
         @actions = []
-        
-        # initialize groups with the :default group
         @groups = []
-        @default_group = FieldGroupDescription.new(:default)
-        @groups << @default_group
         
         @name = name
         @options ||= {}
         @options.merge!(options) if options
-        
-        instance_eval &block
+      end
+      
+      def field(name, options=nil)
+        field = FieldDescription.new(name, options)
+        self.fields << field
+      end   
+         
+      def action(name, options=nil)
+        action = ActionDescription.new(name, options)
+        self.actions << action
       end
       
       def group(name, options=nil, &block)
@@ -35,16 +40,6 @@ module Descraff
         end
       end
       
-      def field(name, options=nil)
-        @default_group.instance_eval do
-          field name, options
-        end
-      end      
-
-      def action(name, options=nil)
-        action = ActionDescription.new(name, options)
-        self.actions << action
-      end
     end
     
   end
