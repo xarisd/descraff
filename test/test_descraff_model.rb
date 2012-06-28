@@ -88,7 +88,6 @@ class TestDescraffModel < Test::Unit::TestCase
         # Open the test_class and define more descriptions
         # with Class.class_eval I can use local variable via closure scope (no need for "lambda" shared state here)
         @test_class.class_eval do
-          
           descraff do
             #add another field just for testing the groups 
             field :code , code_field_options
@@ -106,7 +105,6 @@ class TestDescraffModel < Test::Unit::TestCase
               field :search, filter_field_compound_search_options
             end
           end
-          
         end
         
       end
