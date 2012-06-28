@@ -12,29 +12,16 @@ module Descraff
     end
     
     module ClassMethods
-      def desc_field(name, options)
-        field = FieldDescription.new(name, options)
-        descmeta.fields << field
-      end
       
-      def desc_entity_list(name, options)
-        enitity_list = EntityListDescription.new(name, options)
-        descmeta.entity_lists << enitity_list
-      end
-      
-      def desc_entity_filter(name, options=nil, &block)
-        enitity_filter = EntityFilterDescription.new(name, options)
-        descmeta.entity_filters << enitity_filter
-      end
-      
-      def desc_action(name, options)
-        action = ActionDescription.new(name, options)
-        descmeta.actions << action
-      end
-      
-      def descmeta
+      def descraff(&block) 
         @descmeta ||= Descraff::Model::ModelDescription.new
+        if block
+          @descmeta.instance_eval &block 
+        else
+          @descmeta
+        end
       end
+      
     end
     
   end

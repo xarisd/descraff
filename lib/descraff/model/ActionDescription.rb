@@ -3,7 +3,7 @@ module Descraff
     class ActionDescription
       attr_reader :name, :options
       
-      def initialize(name, options)
+      def initialize(name, options=nil)
         @name = name
         @options ||= {}
         @options.merge!(options) if options
