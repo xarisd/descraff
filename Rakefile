@@ -20,10 +20,12 @@ Jeweler::Tasks.new do |gem|
   gem.homepage = "http://github.com/xarisd/descraff"
   gem.license = "MIT"
   gem.summary = %Q{A Ruby gem for describing your model's scaffolding}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.description = File.read(File.join(File.dirname(__FILE__), 'README.rdoc'))
+  gem.requirements = []
   gem.email = "xaris.dimitriou@gmail.com"
   gem.authors = ["xarisd"]
   gem.version = Descraff::Version::STRING
+  gem.required_ruby_version = '>=1.9'
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new
