@@ -1,7 +1,7 @@
 module Descraff
   module Model
     class ModelDescription
-      attr_accessor :fields, :entity_lists, :entity_filters, :actions
+      attr_reader :fields, :entity_lists, :entity_filters, :actions
       
       def initialize
         @fields = []
