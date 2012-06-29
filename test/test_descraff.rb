@@ -5,7 +5,6 @@ require 'descraff'
 
 class TestDescraff < Test::Unit::TestCase
   
-  
   context "ClassA and ClassB" do
     setup do
       @classA = Class.new
@@ -29,7 +28,6 @@ class TestDescraff < Test::Unit::TestCase
       end
       
       should "be able to open a previously descraffed Class or a subclass of it and add more stuff to it" do
-
         @classA.class_eval do
           descraff do
             action :show 
@@ -43,16 +41,9 @@ class TestDescraff < Test::Unit::TestCase
           end
         end
         assert_equal(1, @classB.descraff.actions.size)
-        
-        
       end
-      
-      
     end
 
-    
-    
   end
-  
 
 end
