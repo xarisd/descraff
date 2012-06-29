@@ -252,7 +252,35 @@ class TestDescraffModel < Test::Unit::TestCase
         assert_equal(:edit, action_edit.name)
       end
 
-      should "view :inline_show must contain several groups (in a tree structure), 1 group action and 1 top level action"
+      should "view :inline_show must contain several groups (in a tree structure), 1 group action and 1 top level action" do
+        view_inline_show = @test_class.descraff.views[2]
+        assert_equal(1, view_inline_show.actions.size)
+        action_edit = view_inline_show.actions[0]
+        assert_equal(:edit, action_edit.name)
+        
+        # test for 1 group (+ :default)
+        assert_equal(2, view_inline_show.groups.size) # always has a :default group
+        group_inline = view_inline_show.groups[1]
+        assert_equal(:inline, group_inline.name)
+        # test group :inline actions
+        assert_equal(1, group_inline.actions.size)
+        action_reverse_order_of_fields = group_inline.actions[0]
+        assert_equal(:reverse_order_of_fields, action_reverse_order_of_fields.name)
+        # test group :inline groups
+        assert_equal(2, group_inline.groups.size)
+        # test group :left
+        group_left = group_inline.groups[0]
+        assert_equal(:left, group_left.name)
+        assert_equal(1, group_left.fields.size)
+        assert_equal(:some_field, group_left.fields[0].name)
+        assert_equal(@field_description_options, group_left.fields[0].options)
+        # test group :right
+        group_right = group_inline.groups[1]
+        assert_equal(:right, group_right.name)
+        assert_equal(1, group_right.fields.size)
+        assert_equal(:code, group_right.fields[0].name)
+        assert_equal({}, group_right.fields[0].options)
+      end
       
     end
   end
